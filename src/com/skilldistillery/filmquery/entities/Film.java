@@ -1,8 +1,15 @@
 package com.skilldistillery.filmquery.entities;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Set;
 
 public class Film {
+	private static final String URL = "jdbc:mysql://localhost:3306/sdvid?useSSL=false";
+	
 	private int id;
 	private String title;
 	private String description;
@@ -13,13 +20,54 @@ public class Film {
 	private int length;
 	private double replacementCost;
 	private String rating;
-	private Set<String> specialFeatures;
+	private String specialFeatures;
 	
-	
+	public Film getFilmById(int filmId) {
+		Film film = null;
+		String sql = "SELECT * FROM film WHERE id = ?";
+		
+		String user = "student";
+		String pass = "student";
 
-	public Film() {
+		PreparedStatement stmt = null;
+		Connection conn = null;
+		ResultSet actorResult = null;
+		
+		try {
+			conn = DriverManager.getConnection(URL, user, pass);
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, id);
+			actorResult = stmt.executeQuery();
+			if (actorResult.next()) {
+				actor = new Actor(); // Create the object
+				// Here is our mapping of query columns to our object fields:
+				actor.setId(actorResult.getInt(1));
+				actor.setFirstName(actorResult.getString(2));
+				actor.setLastName(actorResult.getString(3));
+				actor.setFilms(getFilmsByActorId(actorId)); // An Actor has Films
+
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try {
+			actorResult.close();
+			stmt.close();
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return film;
+	}
+
+	public Film(int filmId, String title2, String desc, short releaseYear2, int langId, int rentDur, double rate, int length2, double repCost, String rating2, String features) {
 		super();
 	}
+	
+
 	
 	
 
@@ -103,11 +151,11 @@ public class Film {
 		this.rating = rating;
 	}
 
-	public Set<String> getSpecialFeatures() {
+	public String getSpecialFeatures() {
 		return specialFeatures;
 	}
 
-	public void setSpecialFeatures(Set<String> specialFeatures) {
+	public void setSpecialFeatures(String specialFeatures) {
 		this.specialFeatures = specialFeatures;
 	}
 
