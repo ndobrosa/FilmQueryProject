@@ -94,7 +94,6 @@ public class FilmQueryApp {
 	private void getFilmById() {
 		FilmQueryApp daoD = new FilmQueryApp();
 		DatabaseAccessorObject dao = new DatabaseAccessorObject();
-
 		System.out.println("What film ID would you like tou see?");
 
 		int filmID = daoD.getIntInput();

@@ -1,11 +1,5 @@
 package com.skilldistillery.filmquery.entities;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Actor {
@@ -68,7 +62,7 @@ public class Actor {
 
 	@Override
 	public String toString() {
-		return "\nActor: id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + "";
+		return "\nid: " + id + ", firstName: " + firstName + ", lastName: " + lastName;
 		//consider adding                  + ", films=" + films + "    instead of   "
 	}
 

@@ -1,14 +1,6 @@
 package com.skilldistillery.filmquery.entities;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Set;
-
-import com.skilldistillery.filmquery.database.DatabaseAccessorObject;
 
 public class Film {
 	private int id;
@@ -25,7 +17,7 @@ public class Film {
 	private String language;
 	private String category;
 	private List<Actor> actors;
-//	private List<InventoryItem> inventoryItems;
+	private List<InventoryItem> inventoryItems;
 
 	public Film() {
 		super();
@@ -166,6 +158,20 @@ public class Film {
 	public void setSpecialFeatures(String specialFeatures) {
 		this.specialFeatures = specialFeatures;
 	}
+	
+	
+
+	public List<InventoryItem> getInventoryItems() {
+		return inventoryItems;
+	}
+
+
+
+	public void setInventoryItems(List<InventoryItem> inventoryItems) {
+		this.inventoryItems = inventoryItems;
+	}
+
+
 
 	@Override
 	public int hashCode() {
@@ -242,17 +248,17 @@ public class Film {
 
 		// language its title, year, rating, and description are displayed.
 
-		return "\n\nFilm Information: \ntitle=" + title + ", Year=" + releaseYear + ", rating=" + rating
-				+ ", description=" + description + ", language=" + language + "\nActor List=" + actors;
+		return "\n\nFilm Information: \ntitle: " + title + ", Year: " + releaseYear + ", rating: " + rating
+				+ ", language: " + language + ",\ndescription: " + description + "\nCAST: " + actors;
 	}
 
 	public String toFullString() {
 
-		return "\n\nFilm Information: \nid=" + id + ", title=" + title + ", description=" + description + ", Year="
-				+ releaseYear + ", languageId=" + languageId + ", language=" + language + ", category: " + category + ", rentalDuration="
-				+ rentalDuration + ", rentalRate=" + rentalRate + ", length=" + length + ", replacementCost="
-				+ replacementCost + ", rating=" + rating + ", specialFeatures=" + specialFeatures + "\nActor List="
-				+ actors;
+		return "\n\nFilm Information: \nid: " + id + ", title: " + title + "\ndescription: " + description + "\nYear: "
+				+ releaseYear + ", languageId: " + languageId + ", language: " + language + ", category: " + category + "\nrentalDuration: "
+				+ rentalDuration + ", rentalRate: " + rentalRate + ", length: " + length + "\nreplacementCost: "
+				+ replacementCost + ", rating: " + rating + ", specialFeatures: " + specialFeatures + "\nActor List: "
+				+ actors + "\nInventory Status: " + inventoryItems;
 	}
 
 }

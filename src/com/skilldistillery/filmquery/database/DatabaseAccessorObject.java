@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.skilldistillery.filmquery.entities.Actor;
 import com.skilldistillery.filmquery.entities.Film;
+import com.skilldistillery.filmquery.entities.InventoryItem;
 
 public class DatabaseAccessorObject implements DatabaseAccessor {
 	private static final String URL = "jdbc:mysql://localhost:3306/sdvid?useSSL=false";
@@ -24,6 +25,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 
 	@Override
 	public Film getFilmById(int filmId) {
+		DatabaseAccessorObject dao = new DatabaseAccessorObject();
 		Film film = null;
 //		String sql =  "SELECT film.*, language.name \"language\" FROM film join language ON film.language_id = language.id WHERE film.id = ?";
 		String sql = "SELECT film.*, language.name \"language\", category.name \"category\" FROM film join language ON film.language_id = language.id join film_category ON film.id = film_category.film_id join category ON film_category.category_id = category.id WHERE film.id = ?";
@@ -54,9 +56,10 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 				film.setReplacementCost(filmResult.getDouble("replacement_cost"));
 				film.setRating(filmResult.getString("rating"));
 				film.setSpecialFeatures(filmResult.getString("special_features"));
-				film.setActors(new DatabaseAccessorObject().getActorsByFilmId(film.getId()));
+				film.setActors(dao.getActorsByFilmId(film.getId()));
 				film.setLanguage(filmResult.getString("language"));
 				film.setCategory(filmResult.getString("category"));
+				film.setInventoryItems(dao.getInventoryItemsByFilmID(film.getId()));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -71,6 +74,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		dao = null;
 		return film;
 	}
 
@@ -116,7 +120,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	}
 
 	@Override
-	public List<Actor> getActorsByFilmId(int actorId)  {
+	public List<Actor> getActorsByFilmId(int filmId) {
 		List<Actor> actorList = new ArrayList<Actor>();
 		String sql = "select actor.* from actor join film_actor ON actor.id = film_actor.actor_id join film ON film_actor.film_id = film.id where film.id = ?";
 		String user = "student";
@@ -128,23 +132,23 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		try {
 			conn = DriverManager.getConnection(URL, user, pass);
 			stmt = conn.prepareStatement(sql);
-			stmt.setInt(1, actorId);
+			stmt.setInt(1, filmId);
 			actorResult = stmt.executeQuery();
-			while(actorResult.next()) {
+			while (actorResult.next()) {
 				Actor a = new Actor();
-				
+
 				a.setId(actorResult.getInt(1));
 				a.setFirstName(actorResult.getString(2));
 				a.setLastName(actorResult.getString(3));
-				
+
 				actorList.add(a);
-				
+
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		try {
 			actorResult.close();
 			stmt.close();
@@ -153,13 +157,58 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
+
 		return actorList;
 	}
-	
-	//Look up a film by a search keyword
+
+	@Override
+	public List<InventoryItem> getInventoryItemsByFilmID(int filmId) {
+		List<InventoryItem> invItems = new ArrayList<>();
+		String sql = "select * from inventory_item where film_id = ?";
+		String user = "student";
+		String pass = "student";
+		PreparedStatement stmt = null;
+		Connection conn = null;
+		ResultSet itemResult = null;
+		
+		try {
+			conn = DriverManager.getConnection(URL, user, pass);
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, filmId);
+			itemResult = stmt.executeQuery();
+			
+			while (itemResult.next()) {
+				InventoryItem item = new InventoryItem();
+				
+				item.setFilm_id(filmId);
+				item.setId(itemResult.getInt("id"));
+				item.setLast_update(itemResult.getString("last_update"));
+				item.setMedia_condition(itemResult.getString("media_condition"));
+				item.setStore_id(itemResult.getInt("store_id"));
+				
+				
+				
+				invItems.add(item);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		try {
+			itemResult.close();
+			stmt.close();
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return invItems;
+	}
+
+	// Look up a film by a search keyword
 	@Override
 	public List<Film> getFilmByKeyword(String input) {
 		List<Film> films = new ArrayList<>();
@@ -171,7 +220,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		PreparedStatement stmt = null;
 		Connection conn = null;
 		ResultSet filmResult = null;
-
+		DatabaseAccessorObject dao = new DatabaseAccessorObject();
 		try {
 			conn = DriverManager.getConnection(URL, user, pass);
 			stmt = conn.prepareStatement(sql);
@@ -179,6 +228,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			stmt.setString(2, "%" + input + "%");
 			filmResult = stmt.executeQuery();
 			
+
 			while (filmResult.next()) {
 				Film film = new Film();
 
@@ -193,10 +243,11 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 				film.setReplacementCost(filmResult.getDouble("replacement_cost"));
 				film.setRating(filmResult.getString("rating"));
 				film.setSpecialFeatures(filmResult.getString("special_features"));
-				film.setActors(new DatabaseAccessorObject().getActorsByFilmId(film.getId()));
+				film.setActors(dao.getActorsByFilmId(film.getId()));
 				film.setLanguage(filmResult.getString("language"));
 				film.setCategory(filmResult.getString("category"));
-				
+				film.setInventoryItems(dao.getInventoryItemsByFilmID(film.getId()));
+
 				films.add(film);
 			}
 		} catch (SQLException e) {
@@ -212,11 +263,9 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		dao = null;
 		return films;
 	}
-	
-	
-	
 
 //	@Override
 //	public List<Film> getFilmsByActorId(int actorId) {
