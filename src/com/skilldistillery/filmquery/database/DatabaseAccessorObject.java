@@ -25,7 +25,8 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	@Override
 	public Film getFilmById(int filmId) {
 		Film film = null;
-		String sql =  "SELECT film.*, language.name \"language\" FROM film join language ON film.language_id = language.id WHERE film.id = ?";
+//		String sql =  "SELECT film.*, language.name \"language\" FROM film join language ON film.language_id = language.id WHERE film.id = ?";
+		String sql = "SELECT film.*, language.name \"language\", category.name \"category\" FROM film join language ON film.language_id = language.id join film_category ON film.id = film_category.film_id join category ON film_category.category_id = category.id WHERE film.id = ?";
 
 		String user = "student";
 		String pass = "student";
@@ -55,6 +56,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 				film.setSpecialFeatures(filmResult.getString("special_features"));
 				film.setActors(new DatabaseAccessorObject().getActorsByFilmId(film.getId()));
 				film.setLanguage(filmResult.getString("language"));
+				film.setCategory(filmResult.getString("category"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -161,7 +163,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	@Override
 	public List<Film> getFilmByKeyword(String input) {
 		List<Film> films = new ArrayList<>();
-		String sql = "SELECT film.*, language.name \"language\" FROM film  join language ON film.language_id = language.id WHERE title like? OR description like ?";
+		String sql = "SELECT film.*, language.name \"language\", category.name \"category\" FROM film join language ON film.language_id = language.id join film_category ON film.id = film_category.film_id join category ON film_category.category_id = category.id WHERE title like ? OR description like ?";
 
 		String user = "student";
 		String pass = "student";
@@ -193,6 +195,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 				film.setSpecialFeatures(filmResult.getString("special_features"));
 				film.setActors(new DatabaseAccessorObject().getActorsByFilmId(film.getId()));
 				film.setLanguage(filmResult.getString("language"));
+				film.setCategory(filmResult.getString("category"));
 				
 				films.add(film);
 			}

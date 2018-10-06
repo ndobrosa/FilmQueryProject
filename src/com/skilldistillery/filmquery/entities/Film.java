@@ -23,11 +23,45 @@ public class Film {
 	private String rating;
 	private String specialFeatures;
 	private String language;
-	
+	private String category;
 	private List<Actor> actors;
+//	private List<InventoryItem> inventoryItems;
+
+	public Film() {
+		super();
+	}
+	
 	
 
-	
+	public Film(int id, String title, String description, String releaseYear, int languageId, int rentalDuration,
+			double rentalRate, int length, double replacementCost, String rating, String specialFeatures,
+			String language, String category, List<Actor> actors) {
+		super();
+		this.id = id;
+		this.title = title;
+		this.description = description;
+		this.releaseYear = releaseYear;
+		this.languageId = languageId;
+		this.rentalDuration = rentalDuration;
+		this.rentalRate = rentalRate;
+		this.length = length;
+		this.replacementCost = replacementCost;
+		this.rating = rating;
+		this.specialFeatures = specialFeatures;
+		this.language = language;
+		this.category = category;
+		this.actors = actors;
+	}
+
+
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
 
 	public String getLanguage() {
 		return language;
@@ -44,20 +78,6 @@ public class Film {
 	public void setActors(List<Actor> actors) {
 		this.actors = actors;
 	}
-
-	public Film(int filmId, String title2, String desc, short releaseYear2, int langId, int rentDur, double rate, int length2, double repCost, String rating2, String features) {
-		super();
-		DatabaseAccessorObject dao = new DatabaseAccessorObject();
-		actors = dao.getActorsByFilmId(filmId);
-	}
-	
-	public Film() {
-		super();
-	}
-	
-
-	
-	
 
 	public int getId() {
 		return id;
@@ -219,10 +239,20 @@ public class Film {
 
 	@Override
 	public String toString() {
-		return "\n\nFilm Information: \nid=" + id + ", title=" + title + ", description=" + description + ", releaseYear=" + releaseYear
-				+ ", languageId=" + languageId + ", language=" + language + ", rentalDuration=" + rentalDuration + ", rentalRate=" + rentalRate
-				+ ", length=" + length + ", replacementCost=" + replacementCost + ", rating=" + rating
-				+ ", specialFeatures=" + specialFeatures + ", \n Actor List=" + actors;
+
+		// language its title, year, rating, and description are displayed.
+
+		return "\n\nFilm Information: \ntitle=" + title + ", Year=" + releaseYear + ", rating=" + rating
+				+ ", description=" + description + ", language=" + language + "\nActor List=" + actors;
+	}
+
+	public String toFullString() {
+
+		return "\n\nFilm Information: \nid=" + id + ", title=" + title + ", description=" + description + ", Year="
+				+ releaseYear + ", languageId=" + languageId + ", language=" + language + ", category: " + category + ", rentalDuration="
+				+ rentalDuration + ", rentalRate=" + rentalRate + ", length=" + length + ", replacementCost="
+				+ replacementCost + ", rating=" + rating + ", specialFeatures=" + specialFeatures + "\nActor List="
+				+ actors;
 	}
 
 }
