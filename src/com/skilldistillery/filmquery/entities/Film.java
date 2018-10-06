@@ -22,11 +22,20 @@ public class Film {
 	private double replacementCost;
 	private String rating;
 	private String specialFeatures;
+	private String language;
 	
 	private List<Actor> actors;
 	
 
 	
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
 
 	public List<Actor> getActors() {
 		return actors;
@@ -211,7 +220,7 @@ public class Film {
 	@Override
 	public String toString() {
 		return "\n\nFilm Information: \nid=" + id + ", title=" + title + ", description=" + description + ", releaseYear=" + releaseYear
-				+ ", languageId=" + languageId + ", rentalDuration=" + rentalDuration + ", rentalRate=" + rentalRate
+				+ ", languageId=" + languageId + ", language=" + language + ", rentalDuration=" + rentalDuration + ", rentalRate=" + rentalRate
 				+ ", length=" + length + ", replacementCost=" + replacementCost + ", rating=" + rating
 				+ ", specialFeatures=" + specialFeatures + ", \n Actor List=" + actors;
 	}

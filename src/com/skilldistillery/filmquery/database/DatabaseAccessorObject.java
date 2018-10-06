@@ -25,7 +25,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	@Override
 	public Film getFilmById(int filmId) {
 		Film film = null;
-		String sql = "SELECT * FROM film WHERE id = ?";
+		String sql =  "SELECT film.*, language.name \"language\" FROM film join language ON film.language_id = language.id WHERE film.id = ?";
 
 		String user = "student";
 		String pass = "student";
@@ -54,6 +54,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 				film.setRating(filmResult.getString("rating"));
 				film.setSpecialFeatures(filmResult.getString("special_features"));
 				film.setActors(new DatabaseAccessorObject().getActorsByFilmId(film.getId()));
+				film.setLanguage(filmResult.getString("language"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -160,7 +161,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	@Override
 	public List<Film> getFilmByKeyword(String input) {
 		List<Film> films = new ArrayList<>();
-		String sql = "SELECT * FROM film WHERE title like ? OR description like ?";
+		String sql = "SELECT film.*, language.name \"language\" FROM film  join language ON film.language_id = language.id WHERE title like? OR description like ?";
 
 		String user = "student";
 		String pass = "student";
@@ -191,6 +192,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 				film.setRating(filmResult.getString("rating"));
 				film.setSpecialFeatures(filmResult.getString("special_features"));
 				film.setActors(new DatabaseAccessorObject().getActorsByFilmId(film.getId()));
+				film.setLanguage(filmResult.getString("language"));
 				
 				films.add(film);
 			}
@@ -209,6 +211,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		}
 		return films;
 	}
+	
 	
 	
 
