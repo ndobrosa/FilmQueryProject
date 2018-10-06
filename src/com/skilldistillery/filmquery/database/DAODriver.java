@@ -9,17 +9,20 @@ import com.skilldistillery.filmquery.entities.Actor;
 import com.skilldistillery.filmquery.entities.Film;
 
 public class DAODriver {
+	Scanner sc = new Scanner(System.in);
 
 	public static void main(String[] args) {
 
-		new DAODriver().launch();
+		DAODriver daoD = new DAODriver();
 
+		daoD.launch();
+		daoD.sc.close();
 	}
 
-	
 	private void launch() {
-		Scanner sc = new Scanner(System.in);
+
 		DatabaseAccessorObject dao = new DatabaseAccessorObject();
+		DAODriver daoD = new DAODriver();
 		int selection = 0;
 
 		while (selection != 5) {
@@ -31,30 +34,152 @@ public class DAODriver {
 				selection = sc.nextInt();
 			} catch (InputMismatchException e) {
 				System.out.println("Wrong input type. Please give a number as input");
-				new DAODriver().launch();
+				daoD.launch();
 			} catch (RuntimeException e) {
 				System.out.println("Something must've went wrong, and I don't know why. Maybe you can figure it out?");
 				System.out.println(e.getStackTrace());
 			}
 
 			if (selection == 1) {
-				System.out.println(dao.getFilmById(2));
+				daoD.getFilmById();
+
 			} else if (selection == 2) {
-				System.out.println();
+				daoD.getFilmByKeyword();
 			} else if (selection == 3) {
-				System.out.println(dao.getActorById(89));
+				daoD.getActorById();
+
 			} else if (selection == 4) {
-				List<Actor> actors = dao.getActorsByFilmId(4);
-				System.out.println(actors);
-
-			}
-
-			else if (selection == 5) {
+				daoD.getActorsByFilmId();
+			} else if (selection == 5) {
 				System.out.println("Bye bye!");
 			}
 		}
 
-		sc.close();
+	}
+
+	private void getActorsByFilmId() {
+		DAODriver daoD = new DAODriver();
+		DatabaseAccessorObject dao = new DatabaseAccessorObject();
+		int filmId = 0;
+		
+		System.out.println("Please enter the film ID: ");
+		try {
+			filmId = sc.nextInt();
+		}
+		catch(RuntimeException e) {
+			System.out.println("Something must've went wrong, and I don't know why. Maybe you can figure it out?");
+			System.out.println(e.getStackTrace());
+		}
+		
+		int actorsAmount = dao.getActorsByFilmId(filmId).size();
+		List<Actor> actors = dao.getActorsByFilmId(filmId);
+		
+
+		if (actorsAmount == 0) {
+			System.out.println("No films ware found\n");
+		} else {
+			System.out.println(actorsAmount + " actors were found.\n***************************************************************************************************\n");
+			System.out.println(actors);		
+		}
+		
+		
+	}
+
+	private void getFilmByKeyword() {
+		DAODriver daoD = new DAODriver();
+		DatabaseAccessorObject dao = new DatabaseAccessorObject();
+		String keyword = null;
+
+		System.out.println("Enter a keyword");
+		try {
+			keyword = sc.nextLine();
+		} catch (InputMismatchException e) {
+			System.out.println("Wrong input type. Please give a number as input");
+			daoD.getFilmByKeyword();
+		} catch (RuntimeException e) {
+			System.out.println("Something must've went wrong, and I don't know why. Maybe you can figure it out?");
+			System.out.println(e.getStackTrace());
+		}
+
+		int filmsSize = dao.getFilmByKeyword(keyword).size();
+
+		if (filmsSize == 0) {
+			System.out.println("No films ware found\n");
+		} else {
+			System.out.println(filmsSize + " films were found.\n***************************************************************************************************\n");
+			System.out.println(dao.getFilmByKeyword(keyword));
+		}
+
+	}
+
+	private void getFilmById() {
+		DAODriver daoD = new DAODriver();
+		DatabaseAccessorObject dao = new DatabaseAccessorObject();
+
+		System.out.println("What film ID would you like tou see?");
+
+		int filmID = 0;
+		try {
+			filmID = sc.nextInt();
+		} catch (InputMismatchException e) {
+			System.out.println("Wrong input type. Please give a number as input");
+			daoD.getFilmById();
+		} catch (RuntimeException e) {
+			System.out.println("Something must've went wrong, and I don't know why. Maybe you can figure it out?");
+			System.out.println(e.getStackTrace());
+		}
+
+		if (dao.getFilmById(filmID) != null) {
+			System.out.println(dao.getFilmById(filmID) + "\n");
+		} else {
+			System.out.println("There is no such film\n");
+		}
+
+	}
+
+	private void getActorById() {
+		DAODriver daoD = new DAODriver();
+		DatabaseAccessorObject dao = new DatabaseAccessorObject();
+
+		System.out.println("Please enter the actor ID: ");
+		int actorID = 0;
+		try {
+			actorID = sc.nextInt();
+		} catch (InputMismatchException e) {
+			System.out.println("Wrong input type. Please give a number as input");
+			daoD.getActorById();
+		} catch (RuntimeException e) {
+			System.out.println("Something must've went wrong, and I don't know why. Maybe you can figure it out?");
+			System.out.println(e.getStackTrace());
+		}
+//		daoD.getActorById();
+
+		if (dao.getActorById(actorID) != null) {
+			System.out.println(dao.getActorById(actorID));
+		} else {
+			System.out.println("There is no such actor\n");
+		}
+
+	}
+	
+	
+	
+//	Gave up so that I can keep the user in the case of InputMismatch in the same loop
+	private int getIntInput() {
+		DAODriver daoD = new DAODriver();
+		
+		int input = 0;
+		try {
+			input = sc.nextInt();
+		} catch (InputMismatchException e) {
+			System.out.println("Wrong input type. Please give a number as input");
+			daoD.getActorById();
+		} catch (RuntimeException e) {
+			System.out.println("Something must've went wrong, and I don't know why. Maybe you can figure it out?");
+			System.out.println(e.getStackTrace());
+		}
+		
+		return input;
 	}
 
 }
