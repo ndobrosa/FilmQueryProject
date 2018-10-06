@@ -5,65 +5,44 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 
+import com.skilldistillery.filmquery.database.DatabaseAccessorObject;
+
 public class Film {
-	private static final String URL = "jdbc:mysql://localhost:3306/sdvid?useSSL=false";
-	
 	private int id;
 	private String title;
 	private String description;
 	private String releaseYear;
 	private int languageId;
-	private int rental_duration;
+	private int rentalDuration;
 	private double rentalRate;
 	private int length;
 	private double replacementCost;
 	private String rating;
 	private String specialFeatures;
 	
-	public Film getFilmById(int filmId) {
-		Film film = null;
-		String sql = "SELECT * FROM film WHERE id = ?";
-		
-		String user = "student";
-		String pass = "student";
+	private List<Actor> actors;
+	
 
-		PreparedStatement stmt = null;
-		Connection conn = null;
-		ResultSet actorResult = null;
-		
-		try {
-			conn = DriverManager.getConnection(URL, user, pass);
-			stmt = conn.prepareStatement(sql);
-			stmt.setInt(1, id);
-			actorResult = stmt.executeQuery();
-			if (actorResult.next()) {
-				actor = new Actor(); // Create the object
-				// Here is our mapping of query columns to our object fields:
-				actor.setId(actorResult.getInt(1));
-				actor.setFirstName(actorResult.getString(2));
-				actor.setLastName(actorResult.getString(3));
-				actor.setFilms(getFilmsByActorId(actorId)); // An Actor has Films
+	
 
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public List<Actor> getActors() {
+		return actors;
+	}
 
-		try {
-			actorResult.close();
-			stmt.close();
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return film;
+	public void setActors(List<Actor> actors) {
+		this.actors = actors;
 	}
 
 	public Film(int filmId, String title2, String desc, short releaseYear2, int langId, int rentDur, double rate, int length2, double repCost, String rating2, String features) {
+		super();
+		DatabaseAccessorObject dao = new DatabaseAccessorObject();
+		actors = dao.getActorsByFilmId(filmId);
+	}
+	
+	public Film() {
 		super();
 	}
 	
@@ -111,12 +90,12 @@ public class Film {
 		this.languageId = languageId;
 	}
 
-	public int getRental_duration() {
-		return rental_duration;
+	public int getRentalDuration() {
+		return rentalDuration;
 	}
 
-	public void setRental_duration(int rental_duration) {
-		this.rental_duration = rental_duration;
+	public void setRentalDuration(int rental_duration) {
+		this.rentalDuration = rental_duration;
 	}
 
 	public double getRentalRate() {
@@ -172,7 +151,7 @@ public class Film {
 		long temp;
 		temp = Double.doubleToLongBits(rentalRate);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + rental_duration;
+		result = prime * result + rentalDuration;
 		temp = Double.doubleToLongBits(replacementCost);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((specialFeatures == null) ? 0 : specialFeatures.hashCode());
@@ -212,7 +191,7 @@ public class Film {
 			return false;
 		if (Double.doubleToLongBits(rentalRate) != Double.doubleToLongBits(other.rentalRate))
 			return false;
-		if (rental_duration != other.rental_duration)
+		if (rentalDuration != other.rentalDuration)
 			return false;
 		if (Double.doubleToLongBits(replacementCost) != Double.doubleToLongBits(other.replacementCost))
 			return false;
@@ -231,10 +210,10 @@ public class Film {
 
 	@Override
 	public String toString() {
-		return "Film id=" + id + ", title=" + title + ", description=" + description + ", releaseYear=" + releaseYear
-				+ ", languageId=" + languageId + ", rental_duration=" + rental_duration + ", rentalRate=" + rentalRate
+		return "Film [id=" + id + ", title=" + title + ", description=" + description + ", releaseYear=" + releaseYear
+				+ ", languageId=" + languageId + ", rentalDuration=" + rentalDuration + ", rentalRate=" + rentalRate
 				+ ", length=" + length + ", replacementCost=" + replacementCost + ", rating=" + rating
-				+ ", specialFeatures=" + specialFeatures + "";
+				+ ", specialFeatures=" + specialFeatures + ", actors=" + actors + "]";
 	}
 
 }
