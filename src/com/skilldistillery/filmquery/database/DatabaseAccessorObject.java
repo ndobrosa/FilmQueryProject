@@ -44,8 +44,8 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	public Film getFilmById(int filmId) {
 		DatabaseAccessorObject dao = new DatabaseAccessorObject();
 		Film film = null;
-		
-		// This string will store the SQL statement
+
+		// sql string will store the SQL statement
 		String sql = "SELECT film.*, language.name \"language\", category.name \"category\" FROM film join language ON film.language_id = language.id join film_category ON film.id = film_category.film_id join category ON film_category.category_id = category.id WHERE film.id = ?";
 
 		// Database login and password
@@ -53,13 +53,25 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		String pass = "student";
 
 		try {
+			// Connecting to the database
 			Connection conn = DriverManager.getConnection(URL, user, pass);
+
+			// Providing the SQL statement which is compiled by the database
 			PreparedStatement stmt = conn.prepareStatement(sql);
+
+			// Replacing the bound variable ('?') with the filmId value.
 			stmt.setInt(1, filmId);
+
+			// Storing the result in a ResultSet object
 			ResultSet filmResult = stmt.executeQuery();
+
+			// if the ResultSet object is not empty we create a new Film using data pulled
+			// from the DB.
 			if (filmResult.next()) {
 				film = new Film();
 
+				// When using the Result Set's getters, we can use column names, or use the
+				// columns number, by order of columns starting with 1.
 				film.setId(filmResult.getInt("id"));
 				film.setTitle(filmResult.getString("title"));
 				film.setDescription(filmResult.getString("description"));
@@ -75,20 +87,23 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 				film.setLanguage(filmResult.getString("language"));
 				film.setCategory(filmResult.getString("category"));
 				film.setInventoryItems(dao.getInventoryItemsByFilmID(film.getId()));
-				
-				filmResult.close();
-				stmt.close();
-				conn.close();
-				dao = null;
+
 			}
+
+			// Close connection to the database
+			filmResult.close();
+			stmt.close();
+			conn.close();
+			dao = null;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return film;
 	}
 
+	// Same logic applies as to the getFilmById(int filmId) method.
 	@Override
 	public Actor getActorById(int actorId) {
 		Actor actor = null;
@@ -96,14 +111,11 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		String user = "student";
 		String pass = "student";
 
-		PreparedStatement stmt = null;
-		Connection conn = null;
-		ResultSet actorResult = null;
 		try {
-			conn = DriverManager.getConnection(URL, user, pass);
-			stmt = conn.prepareStatement(sql);
+			Connection conn = DriverManager.getConnection(URL, user, pass);
+			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, actorId);
-			actorResult = stmt.executeQuery();
+			ResultSet actorResult = stmt.executeQuery();
 			if (actorResult.next()) {
 				actor = new Actor(); // Create the object
 				// Here is our mapping of query columns to our object fields:
@@ -113,12 +125,6 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 //				actor.setFilms(getFilmsByActorId(actorId)); // An Actor has Films
 
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		try {
 			actorResult.close();
 			stmt.close();
 			conn.close();
@@ -126,25 +132,29 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		return actor;
 
 	}
 
+	// Similar logic applies as to the getFilmById(int filmId) method.
 	@Override
 	public List<Actor> getActorsByFilmId(int filmId) {
+		// Since there can be many actors in a film, we will store Actor objects in a
+		// list.
 		List<Actor> actorList = new ArrayList<Actor>();
 		String sql = "select actor.* from actor join film_actor ON actor.id = film_actor.actor_id join film ON film_actor.film_id = film.id where film.id = ?";
 		String user = "student";
 		String pass = "student";
 
-		PreparedStatement stmt = null;
-		Connection conn = null;
-		ResultSet actorResult = null;
 		try {
-			conn = DriverManager.getConnection(URL, user, pass);
-			stmt = conn.prepareStatement(sql);
+			Connection conn = DriverManager.getConnection(URL, user, pass);
+			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, filmId);
-			actorResult = stmt.executeQuery();
+			ResultSet actorResult = stmt.executeQuery();
+
+			// While loop is used as we anticipate there may be more than one row retrieved
+			// as a result of the database search.
 			while (actorResult.next()) {
 				Actor a = new Actor();
 
@@ -155,12 +165,6 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 				actorList.add(a);
 
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		try {
 			actorResult.close();
 			stmt.close();
 			conn.close();
@@ -172,21 +176,19 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		return actorList;
 	}
 
+	// Same logic applies as to the getActorsByFilmId(int filmId) method
 	@Override
 	public List<InventoryItem> getInventoryItemsByFilmID(int filmId) {
 		List<InventoryItem> invItems = new ArrayList<>();
 		String sql = "select * from inventory_item where film_id = ?";
 		String user = "student";
 		String pass = "student";
-		PreparedStatement stmt = null;
-		Connection conn = null;
-		ResultSet itemResult = null;
 
 		try {
-			conn = DriverManager.getConnection(URL, user, pass);
-			stmt = conn.prepareStatement(sql);
+			Connection conn = DriverManager.getConnection(URL, user, pass);
+			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, filmId);
-			itemResult = stmt.executeQuery();
+			ResultSet itemResult = stmt.executeQuery();
 
 			while (itemResult.next()) {
 				InventoryItem item = new InventoryItem();
@@ -199,12 +201,6 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 
 				invItems.add(item);
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		try {
 			itemResult.close();
 			stmt.close();
 			conn.close();
@@ -216,6 +212,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		return invItems;
 	}
 
+	// Same logic applies as to the getActorsByFilmId(int filmId) method
 	// Look up a film by a search keyword
 	@Override
 	public List<Film> getFilmByKeyword(String input) {
@@ -225,16 +222,17 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		String user = "student";
 		String pass = "student";
 
-		PreparedStatement stmt = null;
-		Connection conn = null;
-		ResultSet filmResult = null;
-		DatabaseAccessorObject dao = new DatabaseAccessorObject();
 		try {
-			conn = DriverManager.getConnection(URL, user, pass);
-			stmt = conn.prepareStatement(sql);
+			Connection conn = DriverManager.getConnection(URL, user, pass);
+			PreparedStatement stmt = conn.prepareStatement(sql);
+
+			// The '%' sign is added to the input to notify the database that text may be to
+			// either right or to the left of the input String.
 			stmt.setString(1, "%" + input + "%");
 			stmt.setString(2, "%" + input + "%");
-			filmResult = stmt.executeQuery();
+
+			ResultSet filmResult = stmt.executeQuery();
+			DatabaseAccessorObject dao = new DatabaseAccessorObject();
 
 			while (filmResult.next()) {
 				Film film = new Film();
@@ -257,20 +255,15 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 
 				films.add(film);
 			}
+			filmResult.close();
+			stmt.close();
+			conn.close();
+			dao = null;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		try {
-			filmResult.close();
-			stmt.close();
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		dao = null;
 		return films;
 	}
 
