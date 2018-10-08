@@ -13,8 +13,12 @@ import com.skilldistillery.filmquery.entities.Film;
 import com.skilldistillery.filmquery.entities.InventoryItem;
 
 public class DatabaseAccessorObject implements DatabaseAccessor {
+
+	// URL to the database
 	private static final String URL = "jdbc:mysql://localhost:3306/sdvid?useSSL=false";
 
+	// Static initializer that loads the JDBC driver, enabling the app to interact
+	// with the database
 	static {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -23,32 +27,43 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		}
 	}
 
+	/*
+	 * The method below will take an integer and return a film object. The object is
+	 * retrieved from the database. To connect to the database Connection object is
+	 * created where we pass the URL, and login info to the DriverManager's static
+	 * method, getConnection(...). To communicate with the database we use SQL. We
+	 * use a PreparedStatement object to ensure data safety. Prepared statement's
+	 * setInt method safely replaces the bound variable film.id with input (filmId
+	 * in this case). We then store the results in a ResultSet object and search
+	 * through the result set using ResultSet's getters. In the same lines where we
+	 * use the resultSet to get info about films, we use Film's setters to store the
+	 * result into appropriate variables.
+	 */
+
 	@Override
 	public Film getFilmById(int filmId) {
 		DatabaseAccessorObject dao = new DatabaseAccessorObject();
 		Film film = null;
-//		String sql =  "SELECT film.*, language.name \"language\" FROM film join language ON film.language_id = language.id WHERE film.id = ?";
+		
+		// This string will store the SQL statement
 		String sql = "SELECT film.*, language.name \"language\", category.name \"category\" FROM film join language ON film.language_id = language.id join film_category ON film.id = film_category.film_id join category ON film_category.category_id = category.id WHERE film.id = ?";
 
+		// Database login and password
 		String user = "student";
 		String pass = "student";
 
-		PreparedStatement stmt = null;
-		Connection conn = null;
-		ResultSet filmResult = null;
-
 		try {
-			conn = DriverManager.getConnection(URL, user, pass);
-			stmt = conn.prepareStatement(sql);
+			Connection conn = DriverManager.getConnection(URL, user, pass);
+			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, filmId);
-			filmResult = stmt.executeQuery();
+			ResultSet filmResult = stmt.executeQuery();
 			if (filmResult.next()) {
 				film = new Film();
 
 				film.setId(filmResult.getInt("id"));
 				film.setTitle(filmResult.getString("title"));
 				film.setDescription(filmResult.getString("description"));
-				film.setReleaseYear(filmResult.getString("release_year"));
+				film.setReleaseYear(filmResult.getString("release_year").substring(0, 4));
 				film.setLanguageId(filmResult.getInt("language_id"));
 				film.setRentalDuration(filmResult.getInt("rental_duration"));
 				film.setRentalRate(filmResult.getDouble("rental_rate"));
@@ -60,21 +75,17 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 				film.setLanguage(filmResult.getString("language"));
 				film.setCategory(filmResult.getString("category"));
 				film.setInventoryItems(dao.getInventoryItemsByFilmID(film.getId()));
+				
+				filmResult.close();
+				stmt.close();
+				conn.close();
+				dao = null;
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		try {
-			filmResult.close();
-			stmt.close();
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		dao = null;
+		
 		return film;
 	}
 
@@ -170,24 +181,22 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		PreparedStatement stmt = null;
 		Connection conn = null;
 		ResultSet itemResult = null;
-		
+
 		try {
 			conn = DriverManager.getConnection(URL, user, pass);
 			stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, filmId);
 			itemResult = stmt.executeQuery();
-			
+
 			while (itemResult.next()) {
 				InventoryItem item = new InventoryItem();
-				
+
 				item.setFilm_id(filmId);
 				item.setId(itemResult.getInt("id"));
 				item.setLast_update(itemResult.getString("last_update"));
 				item.setMedia_condition(itemResult.getString("media_condition"));
 				item.setStore_id(itemResult.getInt("store_id"));
-				
-				
-				
+
 				invItems.add(item);
 			}
 		} catch (SQLException e) {
@@ -195,7 +204,6 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			e.printStackTrace();
 		}
 
-		
 		try {
 			itemResult.close();
 			stmt.close();
@@ -227,7 +235,6 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			stmt.setString(1, "%" + input + "%");
 			stmt.setString(2, "%" + input + "%");
 			filmResult = stmt.executeQuery();
-			
 
 			while (filmResult.next()) {
 				Film film = new Film();
@@ -235,7 +242,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 				film.setId(filmResult.getInt("id"));
 				film.setTitle(filmResult.getString("title"));
 				film.setDescription(filmResult.getString("description"));
-				film.setReleaseYear(filmResult.getString("release_year"));
+				film.setReleaseYear(filmResult.getString("release_year").substring(0, 4));
 				film.setLanguageId(filmResult.getInt("language_id"));
 				film.setRentalDuration(filmResult.getInt("rental_duration"));
 				film.setRentalRate(filmResult.getDouble("rental_rate"));
