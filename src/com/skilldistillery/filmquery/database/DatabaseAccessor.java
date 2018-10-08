@@ -6,13 +6,12 @@ import com.skilldistillery.filmquery.entities.Actor;
 import com.skilldistillery.filmquery.entities.Film;
 import com.skilldistillery.filmquery.entities.InventoryItem;
 
+// Defines public abstract methods that every class implementing DatabaseAccessor will need to explicitly implement (define)
 public interface DatabaseAccessor {
 
-	public Film getFilmById(int filmId);
+	Film getFilmById(int filmId);
 
-	public Actor getActorById(int actorId);
-
-//  List<Film> getFilmsByActorId(int actorId);
+	Actor getActorById(int actorId);
 
 	List<Actor> getActorsByFilmId(int filmId);
 

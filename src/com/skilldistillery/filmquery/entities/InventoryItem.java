@@ -1,5 +1,10 @@
 package com.skilldistillery.filmquery.entities;
 
+/*
+ * This class represents a blueprint of an InventoryItem object. It has public getters and setters 
+ * and private fields for encapsulation purposes. It also features a custom toString() 
+ * method which prints values of all fields.
+ */
 public class InventoryItem {
 	private int id;
 	private int film_id;

@@ -2,6 +2,13 @@ package com.skilldistillery.filmquery.entities;
 
 import java.util.List;
 
+/*
+* This class represents a blueprint of a Film object. It has public getters and setters 
+* and private fields for encapsulation purposes. It also features a custom toString() 
+* method that is easier to read. It also has an equals method and a toFullString method
+* which prints value of all fields. Regular toString method prints only the title, 
+* releaseYear, language, description and actors.
+*/
 public class Film {
 	private int id;
 	private String title;
@@ -22,8 +29,6 @@ public class Film {
 	public Film() {
 		super();
 	}
-	
-	
 
 	public Film(int id, String title, String description, String releaseYear, int languageId, int rentalDuration,
 			double rentalRate, int length, double replacementCost, String rating, String specialFeatures,
@@ -44,8 +49,6 @@ public class Film {
 		this.category = category;
 		this.actors = actors;
 	}
-
-
 
 	public String getCategory() {
 		return category;
@@ -158,20 +161,14 @@ public class Film {
 	public void setSpecialFeatures(String specialFeatures) {
 		this.specialFeatures = specialFeatures;
 	}
-	
-	
 
 	public List<InventoryItem> getInventoryItems() {
 		return inventoryItems;
 	}
 
-
-
 	public void setInventoryItems(List<InventoryItem> inventoryItems) {
 		this.inventoryItems = inventoryItems;
 	}
-
-
 
 	@Override
 	public int hashCode() {
@@ -255,10 +252,10 @@ public class Film {
 	public String toFullString() {
 
 		return "\n\nFilm Information: \nid: " + id + ", title: " + title + "\ndescription: " + description + "\nYear: "
-				+ releaseYear + ", languageId: " + languageId + ", language: " + language + ", category: " + category + "\nrentalDuration: "
-				+ rentalDuration + ", rentalRate: " + rentalRate + ", length: " + length + "\nreplacementCost: "
-				+ replacementCost + ", rating: " + rating + ", specialFeatures: " + specialFeatures + "\nActor List: "
-				+ actors + "\nInventory Status: " + inventoryItems;
+				+ releaseYear + ", languageId: " + languageId + ", language: " + language + ", category: " + category
+				+ "\nrentalDuration: " + rentalDuration + ", rentalRate: " + rentalRate + ", length: " + length
+				+ "\nreplacementCost: " + replacementCost + ", rating: " + rating + ", specialFeatures: "
+				+ specialFeatures + "\nActor List: " + actors + "\nInventory Status: " + inventoryItems;
 	}
 
 }

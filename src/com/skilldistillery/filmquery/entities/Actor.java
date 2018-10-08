@@ -2,6 +2,11 @@ package com.skilldistillery.filmquery.entities;
 
 import java.util.List;
 
+/*
+ * This class represents a blueprint of an Actor object. It has public getters and setters 
+ * and private fields for encapsulation purposes. It also features a custom toString() 
+ * method which prints values of all fields.
+ */
 public class Actor {
 
 	private int id;
@@ -63,7 +68,7 @@ public class Actor {
 	@Override
 	public String toString() {
 		return "\nid: " + id + ", firstName: " + firstName + ", lastName: " + lastName;
-		//consider adding                  + ", films=" + films + "    instead of   "
+		// consider adding + ", films=" + films + " instead of "
 	}
 
 	public int getId() {
